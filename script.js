@@ -1,5 +1,5 @@
-const SUPABASE_URL = "COLE_AQUI";
-const SUPABASE_KEY = "COLE_AQUI";
+const SUPABASE_URL = "https://qiebxdlccwayzhyhlxee.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFpZWJ4ZGxjY3dheXpoeWhseGVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk2MDAxODgsImV4cCI6MjA5NTE3NjE4OH0.in1dcIkaLCXWj0QwE148tqGiq_puKMHbcvX2TPkIEC4";
 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
