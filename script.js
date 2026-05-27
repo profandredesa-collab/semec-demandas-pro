@@ -278,8 +278,9 @@ function formatarData(data){
 }
 
 async function concluirDemanda(id){
-  await client.from("demandas").update({status:"concluido"}).eq("id", id);
+  await client.from("demandas").update({status:"arquivado"}).eq("id", id);
   carregarDemandas();
+}
 }
 
 async function excluirDemanda(id){
