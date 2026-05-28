@@ -1,172 +1,112 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SEMEC Demandas PRO</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-  <main id="loginScreen" class="login-screen">
-    <section class="login-card">
-      <div class="brand-badge">SEMEC</div>
-      <h1>Demandas PRO</h1>
-      <p>Controle interno de demandas, prazos, responsáveis e anexos.</p>
+<section id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="badge">SEMEC</div>
+    <h1>Demandas PRO</h1>
+    <p>Sistema interno de demandas, prazos e responsáveis.</p>
+    <label>E-mail</label>
+    <input id="loginEmail" type="email" placeholder="Digite seu e-mail">
+    <label>Senha</label>
+    <input id="loginSenha" type="password" placeholder="Digite sua senha">
+    <button class="btn-primary full" onclick="entrar()">Entrar</button>
+    <small id="loginMsg"></small>
+  </div>
+</section>
 
-      <label>E-mail</label>
-      <input id="loginEmail" type="email" placeholder="seuemail@dominio.com" />
+<main id="appScreen" class="app hidden">
+  <aside class="sidebar">
+    <div>
+      <div class="badge">SEMEC</div>
+      <h2>Demandas PRO</h2>
+      <p>Controle interno</p>
+    </div>
+    <nav>
+      <button class="nav active" onclick="aplicarAtalho('todos', this)">Todas</button>
+      <button class="nav" onclick="aplicarAtalho('hoje', this)">Hoje</button>
+      <button class="nav" onclick="aplicarAtalho('urgentes', this)">Urgentes</button>
+      <button class="nav" onclick="aplicarAtalho('atrasadas', this)">Atrasadas</button>
+      <button class="nav" onclick="aplicarAtalho('aguardando', this)">Aguardando</button>
+      <button class="nav" onclick="aplicarAtalho('arquivadas', this)">Arquivadas</button>
+    </nav>
+    <button class="btn-ghost full" onclick="sair()">Sair</button>
+  </aside>
 
-      <label>Senha</label>
-      <input id="loginSenha" type="password" placeholder="Digite sua senha" />
-
-      <button class="btn-primary full" onclick="entrar()">Entrar</button>
-      <small id="loginMsg"></small>
-    </section>
-  </main>
-
-  <main id="appScreen" class="app-screen hidden">
-    <aside class="sidebar">
+  <section class="content">
+    <header class="topbar">
       <div>
-        <div class="brand-badge">SEMEC</div>
-        <h2>Demandas PRO</h2>
-        <p>Sistema interno</p>
+        <span class="eyebrow">Painel interno da SEMEC</span>
+        <h1>Gestão de Demandas</h1>
+        <p>Demandas, prazos, responsáveis, prioridades e status.</p>
       </div>
+      <button class="btn-primary" onclick="abrirFormulario()">+ Nova demanda</button>
+    </header>
 
-      <nav>
-        <button class="nav-btn active" onclick="aplicarAtalho('todos')">Todas</button>
-        <button class="nav-btn" onclick="aplicarAtalho('hoje')">Hoje</button>
-        <button class="nav-btn" onclick="aplicarAtalho('urgentes')">Urgentes</button>
-        <button class="nav-btn" onclick="aplicarAtalho('atrasadas')">Atrasadas</button>
-        <button class="nav-btn" onclick="aplicarAtalho('aguardando')">Aguardando</button>
-        <button class="nav-btn" onclick="aplicarAtalho('concluidas')">Concluídas</button>
-      </nav>
-
-      <button class="btn-ghost" onclick="sair()">Sair</button>
-    </aside>
-
-    <section class="content">
-      <header class="topbar">
-        <div>
-          <span class="eyebrow">Painel interno da SEMEC</span>
-          <h1>Gestão de Demandas</h1>
-          <p>Organize prazos, responsáveis, prioridades, status e documentos.</p>
-        </div>
-        <button class="btn-primary" onclick="abrirFormulario()">+ Nova demanda</button>
-      </header>
-
-      <section class="dashboard">
-        <article class="metric card-blue">
-          <span>Hoje</span>
-          <strong id="countHoje">0</strong>
-        </article>
-        <article class="metric card-red">
-          <span>Urgentes</span>
-          <strong id="countUrgentes">0</strong>
-        </article>
-        <article class="metric card-orange">
-          <span>Atrasadas</span>
-          <strong id="countAtrasadas">0</strong>
-        </article>
-        <article class="metric card-green">
-          <span>Concluídas</span>
-          <strong id="countConcluidas">0</strong>
-        </article>
-      </section>
-
-      <section class="filters">
-        <input id="busca" placeholder="Buscar por título, setor, responsável ou descrição..." oninput="renderizar()" />
-
-        <select id="filtroStatus" onchange="renderizar()">
-          <option value="">Todos os status</option>
-          <option value="pendente">Pendente</option>
-          <option value="andamento">Em andamento</option>
-          <option value="aguardando">Aguardando documento/resposta</option>
-          <option value="concluido">Concluído</option>
-          <option value="arquivado">Arquivado</option>
-        </select>
-
-        <select id="filtroPrioridade" onchange="renderizar()">
-          <option value="">Todas as prioridades</option>
-          <option value="urgente">Urgente</option>
-          <option value="importante">Importante</option>
-          <option value="depois">Depois</option>
-        </select>
-
-        <input id="filtroResponsavel" placeholder="Filtrar responsável" oninput="renderizar()" />
-      </section>
-
-      <section id="listaDemandas" class="demand-list"></section>
+    <section class="dashboard">
+      <article class="metric blue"><span>Hoje</span><strong id="countHoje">0</strong></article>
+      <article class="metric red"><span>Urgentes</span><strong id="countUrgentes">0</strong></article>
+      <article class="metric orange"><span>Atrasadas</span><strong id="countAtrasadas">0</strong></article>
+      <article class="metric green"><span>Arquivadas</span><strong id="countArquivadas">0</strong></article>
     </section>
-  </main>
 
-  <div id="modal" class="modal hidden">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h2 id="modalTitulo">Nova demanda</h2>
-        <button class="icon-btn" onclick="fecharFormulario()">×</button>
-      </div>
+    <section class="filters">
+      <input id="busca" placeholder="Buscar por título, descrição, setor ou responsável..." oninput="renderizar()">
+      <select id="filtroStatus" onchange="renderizar()">
+        <option value="">Todos os status</option>
+        <option value="pendente">Pendente</option>
+        <option value="andamento">Em andamento</option>
+        <option value="aguardando">Aguardando</option>
+        <option value="arquivado">Arquivado</option>
+      </select>
+      <select id="filtroPrioridade" onchange="renderizar()">
+        <option value="">Todas as prioridades</option>
+        <option value="urgente">Urgente</option>
+        <option value="importante">Importante</option>
+        <option value="depois">Depois</option>
+      </select>
+      <input id="filtroResponsavel" placeholder="Filtrar responsável" oninput="renderizar()">
+    </section>
 
-      <input type="hidden" id="demandaId" />
+    <section id="listaDemandas" class="lista"></section>
+  </section>
+</main>
 
-      <label>Título da demanda</label>
-      <input id="titulo" placeholder="Ex.: Responder ofício do transporte escolar" />
-
-      <label>Descrição</label>
-      <textarea id="descricao" placeholder="Detalhe a demanda, encaminhamento, escola, processo ou pendência..."></textarea>
-
-      <div class="grid-2">
-        <div>
-          <label>Setor / Escola</label>
-          <input id="setor" placeholder="Ex.: Transporte / EMEF..." />
-        </div>
-        <div>
-          <label>Responsável</label>
-          <input id="responsavel" placeholder="Ex.: André / Andressa" />
-        </div>
-      </div>
-
-      <div class="grid-3">
-        <div>
-          <label>Prazo</label>
-          <input id="prazo" type="date" />
-        </div>
-
-        <div>
-          <label>Prioridade</label>
-          <select id="prioridade">
-            <option value="urgente">🔴 Urgente</option>
-            <option value="importante">🟡 Importante</option>
-            <option value="depois">🔵 Depois</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Status</label>
-          <select id="status">
-            <option value="pendente">Pendente</option>
-            <option value="andamento">Em andamento</option>
-            <option value="aguardando">Aguardando</option>
-            <option value="concluido">Concluído</option>
-            <option value="arquivado">Arquivado</option>
-          </select>
-        </div>
-      </div>
-
-      <label>Observações</label>
-      <textarea id="observacoes" placeholder="Ex.: aguardando documento, precisa retornar ao setor, cobrar resposta..."></textarea>
-
-      <label>Anexo</label>
-      <input id="arquivo" type="file" />
-      <small>PDF, Word, Excel ou imagem. Um anexo principal por demanda nesta versão.</small>
-
-      <div class="modal-actions">
-        <button class="btn-ghost" onclick="fecharFormulario()">Cancelar</button>
-        <button class="btn-primary" onclick="salvarDemanda()">Salvar demanda</button>
-      </div>
+<div id="modal" class="modal hidden">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h2 id="modalTitulo">Nova demanda</h2>
+      <button class="icon" onclick="fecharFormulario()">×</button>
+    </div>
+    <input type="hidden" id="demandaId">
+    <label>Título</label>
+    <input id="titulo" placeholder="Ex.: Responder ofício, acompanhar processo...">
+    <label>Descrição</label>
+    <textarea id="descricao" placeholder="Detalhes da demanda..."></textarea>
+    <div class="grid-2">
+      <div><label>Setor / Escola</label><input id="setor" placeholder="Ex.: Transporte, Obras, Escola..."></div>
+      <div><label>Responsável</label><input id="responsavel" placeholder="Ex.: André, Andressa..."></div>
+    </div>
+    <div class="grid-3">
+      <div><label>Prazo</label><input id="prazo" type="date"></div>
+      <div><label>Prioridade</label><select id="prioridade"><option value="urgente">🔴 Urgente</option><option value="importante">🟡 Importante</option><option value="depois">🔵 Depois</option></select></div>
+      <div><label>Status</label><select id="status"><option value="pendente">Pendente</option><option value="andamento">Em andamento</option><option value="aguardando">Aguardando</option><option value="arquivado">Arquivado</option></select></div>
+    </div>
+    <label>Observações</label>
+    <textarea id="observacoes" placeholder="Observações internas..."></textarea>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="fecharFormulario()">Cancelar</button>
+      <button id="btnSalvar" class="btn-primary" onclick="salvarDemanda()">Salvar demanda</button>
     </div>
   </div>
-
-  <script src="script.js"></script>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
